@@ -19,6 +19,8 @@ import requests
 headers = {
     "User-Agent": "FINSight gotskin4@gmail.com"
 }
+
+
 def get_cik_from_ticker(ticker_symbol):
     headers = {'User-Agent': 'FINSight gotskin4@gmail.com'}
     url = "https://www.sec.gov/files/company_tickers.json"
@@ -97,14 +99,11 @@ def ingest_company(ticker: str, num_filings: int = 3):
 
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     vector_store = FAISS.from_texts(all_texts, embedding=embeddings)
-    vector_store.save_local("faiss_index")
+    folder_name = f"faiss_{ticker.upper()}"
+    vector_store.save_local(folder_name)
     print(f"Done. Total chunks indexed: {len(all_texts)}")
+    return vector_store
 
-if __name__ == "__main__":
-    import sys
-    ticker = sys.argv[1] if len(sys.argv) > 1 else "AAPL"
-    num_filings = int(sys.argv[2]) if len(sys.argv) > 2 else 3
-    ingest_company(ticker, num_filings)
 
 
 
